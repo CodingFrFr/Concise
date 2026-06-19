@@ -1,0 +1,86 @@
+// Concise
+
+// demo.cise
+// v1.0.0
+
+
+// Struct with pythian like indention
+st User
+    String name
+    Int age
+    Float rating
+
+
+List[User] users = []
+List[Int] example_list_of_numbers = [1, 2, 3, 56, 5, 6, 9, 10]
+
+
+fn create_user(name: String, age: Int)
+    // Defaulting missing struct values (rating) to 0.0
+    User new_user = User(name, age, rating: 0.0)
+    users.push(new_user)
+
+fn register_user_from_web(raw_name: String, raw_age: String, raw_rating: String) -> User!
+    // Fallible conversions safely extracted via '?' bubble up
+    Int validated_age = (raw_age as Int)?
+    Float validated_rating = (raw_rating as Float)?
+
+    User new_user = User(name: raw_name, age: validated_age, rating: validated_rating)
+    users.push(new_user)
+    return new_user
+
+fn get_user(id: Int) -> User! 
+    // '?' bubbles the error up immediately if users[id] fails
+    User user = users[id]? 
+    
+    // Explicitly checking if user exists
+    if user
+        return user
+    else
+        return error("User does not exist")
+
+fn print_user(id: Int)
+    User user = User("An error occurred", 404, 0.0)
+    
+    try
+        user = get_user(id)?
+    catch err
+        log("Caught error: {err.message}")
+
+    if user.age >= 65 
+        log("{user.name}, {user.age} (old/retired).")
+    else
+        log("{user.name}, {user.age}.")
+
+fn print_user_stats(id: Int)
+    // Nullish coalescing operator handles out-of-bounds safety
+    User user = users[id] ?? User("Guest", 0, 0.0)
+
+    // Infallible casting
+    Float age_as_float = user.age as Float
+    Float magic_score = age_as_float * user.rating
+
+    log("User score is: " + (magic_score as String))
+
+
+name = "Alice"
+age = 30
+create_user(name, age) 
+
+create_user(name: "Bob", age: 25) 
+
+raw_name = "Charlie"
+raw_age = "29"
+raw_rating = "4.8"
+register_user_from_web(raw_name, raw_age, raw_rating)?
+
+// --- Data Operations & Analytics ---
+users[0].age += 35
+String coworker = "Gary" 
+
+// --- Output Reports ---
+id = 1
+print_user(id)
+print_user_stats(id)
+
+log("{users.length()} total users.")
