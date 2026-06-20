@@ -84,3 +84,4 @@ print_user(id)
 print_user_stats(id)
 
 log("{users.length()} total users.")
+log("{example_list_of_numbers[]}")
